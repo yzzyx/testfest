@@ -13,18 +13,19 @@
     <small>Generated {{ date }}</small>
 </div>
 
-{% for-each-branch %}
+{% for branches %}
     <div class="container">
     <div class="col-md-2">
         {{ name }}
     </div>
     <div class="col-md-4">
         <span class="label label-info">Total tests: <span class="badge">{{ total_tests }}</span></span></small>
-{% if failed_tests > 0 %}
+{% if $failed_tests > 0 %}
 &nbsp;<span class="label label-danger">Tests failed: <span class="badge">{{ failed_tests }}</span></span>
-{% else %}
-        echo '<span class="label label-success">Tests passsed</span><br/>'
-{% endif %}
+{% end if %}
+{% if $failed_tests == 0 %}
+        <span class="label label-success">Tests passsed</span><br/>
+{% end if %}
     <button type="button" class="btn btn-info btn-xs" data-toggle="collapse"
         data-target="#LOG_{{ name }}" aria-expanded="false" aria-controls="LOG_{{ name }}">
     Show log</button>
