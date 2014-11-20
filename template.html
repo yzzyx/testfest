@@ -1,0 +1,45 @@
+<html>
+<head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+</head>
+
+<body>
+<div class="container">
+<div class="page-header">
+    <h1>{{ GIT_PROJECT }}</h1>
+    <small>Generated {{ DATE }}</small>
+</div>
+
+{% for-each-branch %}
+    <div class="container">
+    <div class="col-md-2">
+        {{ BRANCH }}
+    </div>
+    <div class="col-md-4">
+        <span class="label label-info">Total tests: <span class="badge">{{ TOTAL_TESTS }}</span></span></small>
+{% if FAILED_TESTS > 0 %}
+&nbsp;<span class="label label-danger">Tests failed: <span class="badge">{{ FAILED_TESTS }}</span></span>
+{% else %}
+        echo '<span class="label label-success">Tests passsed</span><br/>'
+{% endif %}
+    <button type="button" class="btn btn-info btn-xs" data-toggle="collapse"
+        data-target="#LOG_{{ BRANCH }}" aria-expanded="false" aria-controls="LOG_{{ BRANCH }}">
+    Show log</button>
+    </div>
+    </div><br/>
+    <div class="container">
+    <div id="LOG_{{ BRANCH }}" class="collapse">
+    <pre>
+    {{ LOG_CONTENTS }}
+    </pre>
+    </div>
+    </div>
+{% endfor %}
+</div>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+</body>
