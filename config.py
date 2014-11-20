@@ -13,3 +13,7 @@ IMPORT_REQUIREMENTS=True
 # Where to store repos
 REPOSITORY_PATH="."
 VIRTENV_PATH=".virtualenvs"
+
+# Template settings
+TEMPLATE_FILE="template.html"
+DATETIME_STR="%a, %d %b %Y %H:%M:%S"
