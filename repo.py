@@ -138,7 +138,7 @@ class Repository:
         subprocess.call(["git", "fetch", "--all"])
 
     def get_branches(self):
-        po = subprocess.Popen(["git", "branch"], stdout=subprocess.PIPE)
+        po = subprocess.Popen(["git", "branch", "-a"], stdout=subprocess.PIPE)
         output = po.communicate()[0]
 
         branches = []
@@ -146,6 +146,11 @@ class Repository:
             branch = Branch()
             branch.repository = self.repository_name
             branch.name = lines[2:]
+
+            if branch.name.startswith('('):
+                continue
+            if "->" in branch.name:
+                continue
 
             po = subprocess.Popen(['git','log','-1','--pretty=format:%ct', branch.name],
                     stdout=subprocess.PIPE)
