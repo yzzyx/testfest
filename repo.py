@@ -2,13 +2,83 @@
 import subprocess
 import os
 import config
+import sqlite3
+
+def setup_db(db_name):
+    """ Setup database for initial use and return connection """
+    if not config.USE_SQLITE3:
+        return
+
+    conn = sqlite3.connect(db_name)
+    conn.execute("""
+            CREATE TABLE IF NOT EXISTS branch_saved_data
+                ( name varchar(50),
+                  last_updated int,
+                  total_tests int,
+                  failed_tests int,
+                  output_log text) 
+        """)
+    conn.commit()
+    return conn
 
 class Branch:
     name = ""
+    repository = ""
     last_updated = 0
     total_tests = 0
     failed_tests = 0
     output_log = ""
+
+    # If this is true, the results came from the database
+    cached_data = False
+
+    def get_saved_data(self):
+
+        if not config.USE_SQLITE3:
+            return
+
+        conn = setup_db(config.SQLITE3_DB)
+        c = conn.cursor()
+
+        res = c.execute("SELECT total_tests, failed_tests, output_log FROM "
+                "branch_saved_data "
+                "WHERE name = ? AND last_updated = ?", (self.name, self.last_updated))
+
+        data = c.fetchone()
+        conn.close()
+
+        if data is None:
+            # No data found
+            return
+
+        self.total_tests = data[0]
+        self.failed_tests = data[1]
+        self.output_log = data[2]
+        self.cached_data = True
+
+    def save(self):
+        if not config.USE_SQLITE3:
+            return
+
+        # Our data came from the database, so we don't need to save it
+        if self.cached_data:
+            return
+
+        conn = setup_db(config.SQLITE3_DB)
+        c = conn.cursor()
+
+        res = c.execute("INSERT INTO branch_saved_data "
+            "(name, last_updated, total_tests, failed_tests, output_log) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (self.name, self.last_updated,
+            self.total_tests, self.failed_tests, self.output_log))
+
+        conn.commit()
+        conn.close()
+
+        # Don't save the data twice
+        self.cached_data = True
+
 
 class Repository:
     repository_name = ""
@@ -74,11 +144,15 @@ class Repository:
         branches = []
         for lines in output.splitlines():
             branch = Branch()
+            branch.repository = self.repository_name
             branch.name = lines[2:]
 
             po = subprocess.Popen(['git','log','-1','--pretty=format:%ct', branch.name],
                     stdout=subprocess.PIPE)
             branch.last_updated = int(po.communicate()[0])
+
+            # Load cached data, if we have any
+            branch.get_saved_data()
             branches.append(branch)
         return branches
 

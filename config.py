@@ -14,6 +14,10 @@ IMPORT_REQUIREMENTS=True
 REPOSITORY_PATH="."
 VIRTENV_PATH=".virtualenvs"
 
+# Use SQLITE3 for cache of branch test-info
+USE_SQLITE3 = True
+SQLITE3_DB = "testdata.db"
+
 # Template settings
 TEMPLATE_FILE="template.html"
 DATETIME_STR="%a, %d %b %Y %H:%M:%S"

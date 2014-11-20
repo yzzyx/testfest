@@ -37,6 +37,10 @@ if not os.path.isdir(config.VIRTENV_PATH):
 #        "full_name": "yzzyx/photoshop", },
 #        "ref": "refs/heads/master" }))
 
+variable_list = { "git_clone_url":  "https://github.com/yzzyx/photoshop.git",
+                "git_repository_full_name": "yzzyx/photoshop",
+                "date": strftime(config.DATETIME_STR, localtime()) }
+
 repo = Repository("yzzyx/photoshop")
 repo.set_clone_url("https://github.com/yzzyx/photoshop.git")
 repo.initialize()
@@ -45,18 +49,19 @@ repo.fetch()
 branches = repo.get_branches()
 
 for b in branches:
-    print "%s %s" % (b.name, strftime(config.DATETIME_STR,localtime(b.last_updated)))
 
-    variable_list = { "git_clone_url":  "https://github.com/yzzyx/photoshop.git",
-                    "git_repository_full_name": "yzzyx/photoshop",
-                    "date": strftime(config.DATETIME_STR, localtime()) }
+    # Check if we already have this data
+    if not b.cached_data:
+        print "Not cached: %s %s" % (b.name, strftime(config.DATETIME_STR,localtime(b.last_updated)))
+        (rv, total, failed, output) = handlers.handler.process_handlers()
+        b.failed_tests = failed
+        b.total_tests = total
+        b.output_log = output
+        b.save()
+    else:
+        print "Cached: %s %s" % (b.name, strftime(config.DATETIME_STR,localtime(b.last_updated)))
 
-    (rv, total, failed, output) = handlers.handler.process_handlers()
-    b.failed_tests = failed
-    b.total_tests = total
-    b.output_log = output
-
-    repo.reset_env()
+repo.reset_env()
 
 t = template.Template(config.TEMPLATE_FILE)
 t.set_variables(variable_list)
