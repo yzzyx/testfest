@@ -9,6 +9,13 @@ import handlers.handler
 import template
 from time import strftime, localtime
 
+class Branch:
+    name = ""
+    last_updated = 0
+    total_tests = 0
+    failed_tests = 0
+    output_log = ""
+
 class Repository:
     repository_name = ""
     clone_url = ""
@@ -62,14 +69,30 @@ class Repository:
         if self.original_pyhome:
             os.environ["PYTHONHOME"] = self.original_pyhome
 
-    def pull(self, full_ref):
-        ref = full_ref[full_ref.rfind('/')+1:]
-
+    def fetch(self):
         # First, download data
         subprocess.call(["git", "fetch", "--all"])
 
+    def get_branches(self):
+        po = subprocess.Popen(["git", "branch"], stdout=subprocess.PIPE)
+        output = po.communicate()[0]
+
+        branches = []
+        for lines in output.splitlines():
+            branch = Branch()
+            branch.name = lines[2:]
+
+            po = subprocess.Popen(['git','log','-1','--pretty=format:%ct', branch.name],
+                    stdout=subprocess.PIPE)
+            branch.last_updated = int(po.communicate()[0])
+            branches.append(branch)
+        return branches
+
+    def set_branch(self, branch):
+        #ref = full_ref[full_ref.rfind('/')+1:]
+
         # Now switch to ref, and ignore/overwrite any/all local changes
-        subprocess.call(["git", "reset", "--hard", ref])
+        subprocess.call(["git", "reset", "--hard", branch])
 
         # Run pip again on requirements file
         if config.IMPORT_REQUIREMENTS and os.path.exists("requirements.txt"):
@@ -108,20 +131,28 @@ repo = Repository("yzzyx/photoshop")
 repo.set_clone_url("https://github.com/yzzyx/photoshop.git")
 repo.initialize()
 repo.setup_env()
-repo.pull("refs/heads/master")
+repo.fetch()
+branches = repo.get_branches()
 
-variable_list = { "GIT_CLONE_URL":  "https://github.com/yzzyx/photoshop.git",
-                "GIT_REPOSITORY_FULL_NAME": "yzzyx/photoshop",
-                "DATE": strftime(config.DATETIME_STR, localtime()) }
+for b in branches:
+    print "%s %s" % (b.name, strftime(config.DATETIME_STR,localtime(b.last_updated)))
 
-(rv, total, failed, output) = handlers.handler.process_handlers()
-repo.reset_env()
+    variable_list = { "git_clone_url":  "https://github.com/yzzyx/photoshop.git",
+                    "git_repository_full_name": "yzzyx/photoshop",
+                    "date": strftime(config.DATETIME_STR, localtime()) }
 
-print("Total, failed: %s, %s\n" % ( total, failed))
-print output
+    (rv, total, failed, output) = handlers.handler.process_handlers()
+    b.failed_tests = failed
+    b.total_tests = total
+    b.output_log = output
+
+    repo.reset_env()
 
 t = template.Template(config.TEMPLATE_FILE)
 t.set_variables(variable_list)
+for b in branches:
+    t.add_branch(b.__dict__)
+
 print t.parse()
 
 
