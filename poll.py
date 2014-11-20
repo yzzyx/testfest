@@ -35,10 +35,12 @@ while 1:
         # Check if we already have this data
         if not b.cached_data:
             print "Not cached: %s %s" % (b.name, time.strftime(config.DATETIME_STR,time.localtime(b.last_updated)))
-            (rv, total, failed, output) = handlers.process_handlers()
-            b.failed_tests = failed
-            b.total_tests = total
-            b.output_log = output
+            repo.set_branch(b)
+            info = handlers.process_handlers(b)
+            b.failed_tests = info['failed_tests']
+            b.total_tests = info['total_tests']
+            b.output_log = info['output']
+            b.coverage_log = os.path.join(repo.repo_path,info['coverage'],'index.html')
             b.save()
         else:
             print "Cached: %s %s" % (b.name, time.strftime(config.DATETIME_STR,time.localtime(b.last_updated)))
