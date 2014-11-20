@@ -28,6 +28,7 @@ class Branch:
     total_tests = 0
     failed_tests = 0
     output_log = ""
+    coverage_log = ""
 
     # If this is true, the results came from the database
     cached_data = False
@@ -145,14 +146,16 @@ class Repository:
         for lines in output.splitlines():
             branch = Branch()
             branch.repository = self.repository_name
-            branch.name = lines[2:]
+            branch.ref = lines[2:]
 
-            if branch.name.startswith('('):
+            # We only care about the remote ones
+            if not branch.ref.startswith("remotes/"):
                 continue
-            if "->" in branch.name:
+            if "->" in branch.ref:
                 continue
+            branch.name = branch.ref[branch.ref.rfind('/')+1:]
 
-            po = subprocess.Popen(['git','log','-1','--pretty=format:%ct', branch.name],
+            po = subprocess.Popen(['git','log','-1','--pretty=format:%ct', branch.ref],
                     stdout=subprocess.PIPE)
             branch.last_updated = int(po.communicate()[0])
 
@@ -165,7 +168,7 @@ class Repository:
         #ref = full_ref[full_ref.rfind('/')+1:]
 
         # Now switch to ref, and ignore/overwrite any/all local changes
-        subprocess.call(["git", "reset", "--hard", branch])
+        subprocess.call(["git", "reset", "--hard", branch.ref])
 
         # Run pip again on requirements file
         if config.IMPORT_REQUIREMENTS and os.path.exists("requirements.txt"):
