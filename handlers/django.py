@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 import subprocess
 import re
+import os
+from handler import register_handler
 
-class TestHandler():
-    pass
 
-class Django(TestHandler):
+@register_handler
+class Django():
+
+    def is_applicable(self):
+        if os.path.isfile("manage.py"):
+            return True
+        return False
 
     def run_test(self):
         po = subprocess.Popen(["python", "manage.py", "test", "-v2"], stderr=subprocess.PIPE)

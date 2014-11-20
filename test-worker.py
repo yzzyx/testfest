@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import handlers.django
+import handlers.handler
 
 def repo_init(repository_name, clone_url):
 
@@ -75,12 +76,10 @@ process_push(json.dumps({ "repository": { "clone_url": "https://github.com/yzzyx
         "full_name": "yzzyx/photoshop", },
         "ref": "refs/heads/master" }))
 
-d = handlers.django.Django()
-(rv, output) = d.run_test()
-(total, failed) = d.parse_test(output)
 
+(rv, total, failed, output) = handlers.handler.process_handlers()
 
-print("%s, %s\n" % ( total, failed))
+print("Total, failed: %s, %s\n" % ( total, failed))
 print output
 
 
