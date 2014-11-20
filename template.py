@@ -10,21 +10,26 @@ FAILED_TESTS
 LOG_CONTENTS
 
 """
-
 import re
 
 class Template:
-    variables = { "DATE": "191919" }
-    branches = [ { "BRANCH": "broro", } ]
+    variables = { }
+    branches = []
+    template = ""
 
-    def __init__(self, template):
-        self.template = template
+    def __init__(self, template_file):
+
+        with open(template_file, "r") as fd:
+            self.template = fd.read()
 
     def _get_var(self, variable_name):
         if variable_name in self.variables:
             return self.variables[variable_name]
 
         return ""
+
+    def set_variables(self, var_list):
+        self.variables = var_list
 
     def _for_each_branch(self, branch_template):
 
@@ -80,14 +85,3 @@ class Template:
         parsed_template += self.template[last_match_pos:]
 
         return parsed_template
-
-
-template = ""
-with open("template.html", "r") as fd:
-    template = fd.read()
-
-
-???
-???
-???
-???
