@@ -1,15 +1,4 @@
 # -*- coding: utf-8 -*-
-
-"""
-Known template variables:
-
-GIT_PROJECT
-BRANCH
-TOTAL_TESTS
-FAILED_TESTS
-LOG_CONTENTS
-
-"""
 import re
 
 class Template:
@@ -17,12 +6,16 @@ class Template:
     branches = []
     template = ""
 
-    def __init__(self, template_file):
+    def __init__(self, template_file=None, template=None):
 
-        with open(template_file, "r") as fd:
-            self.template = fd.read()
+        if template_file:
+            with open(template_file, "r") as fd:
+                self.template = fd.read()
+        elif template:
+            self.template = template
 
     def _get_var(self, variable_name):
+        variable_name = variable_name.lower()
         if variable_name in self.variables:
             return self.variables[variable_name]
 
@@ -31,11 +24,14 @@ class Template:
     def set_variables(self, var_list):
         self.variables = var_list
 
+    def add_branch(self, branch_dict):
+        self.branches.append(branch_dict)
+
     def _for_each_branch(self, branch_template):
 
         data = ""
         for branch in self.branches:
-            sub_template = Template(branch_template)
+            sub_template = Template(template = branch_template)
             sub_template.variables = dict(self.variables.items() + branch.items())
             data += sub_template.parse()
         return data
@@ -56,7 +52,7 @@ class Template:
                 parsed_template += self.template[last_match_pos:m.start()]
 
                 if m.group(2): # This is a variable
-                    parsed_template += self._get_var(m.group(2))
+                    parsed_template += "%s" % self._get_var(m.group(2))
                     last_match_pos = m.end()
                 elif m.group(3): # This is a "function"
                     function = m.group(3).strip()
@@ -79,8 +75,6 @@ class Template:
                         break
                     else:
                         last_match_pos = m.end()
-
-                    parsed_template += "function:" + function
 
         parsed_template += self.template[last_match_pos:]
 

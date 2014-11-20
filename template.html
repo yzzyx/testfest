@@ -9,31 +9,31 @@
 <body>
 <div class="container">
 <div class="page-header">
-    <h1>{{ GIT_PROJECT }}</h1>
-    <small>Generated {{ DATE }}</small>
+    <h1>{{ git_repository_full_name }}</h1>
+    <small>Generated {{ date }}</small>
 </div>
 
 {% for-each-branch %}
     <div class="container">
     <div class="col-md-2">
-        {{ BRANCH }}
+        {{ name }}
     </div>
     <div class="col-md-4">
-        <span class="label label-info">Total tests: <span class="badge">{{ TOTAL_TESTS }}</span></span></small>
-{% if FAILED_TESTS > 0 %}
-&nbsp;<span class="label label-danger">Tests failed: <span class="badge">{{ FAILED_TESTS }}</span></span>
+        <span class="label label-info">Total tests: <span class="badge">{{ total_tests }}</span></span></small>
+{% if failed_tests > 0 %}
+&nbsp;<span class="label label-danger">Tests failed: <span class="badge">{{ failed_tests }}</span></span>
 {% else %}
         echo '<span class="label label-success">Tests passsed</span><br/>'
 {% endif %}
     <button type="button" class="btn btn-info btn-xs" data-toggle="collapse"
-        data-target="#LOG_{{ BRANCH }}" aria-expanded="false" aria-controls="LOG_{{ BRANCH }}">
+        data-target="#LOG_{{ name }}" aria-expanded="false" aria-controls="LOG_{{ name }}">
     Show log</button>
     </div>
     </div><br/>
     <div class="container">
-    <div id="LOG_{{ BRANCH }}" class="collapse">
+    <div id="LOG_{{ name }}" class="collapse">
     <pre>
-    {{ LOG_CONTENTS }}
+    {{ output_log }}
     </pre>
     </div>
     </div>
