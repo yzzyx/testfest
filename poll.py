@@ -3,7 +3,7 @@
 import config
 import json
 import os
-import handlers.handler
+import handlers
 import template
 import time
 from repo import Repository
@@ -35,7 +35,7 @@ while 1:
         # Check if we already have this data
         if not b.cached_data:
             print "Not cached: %s %s" % (b.name, time.strftime(config.DATETIME_STR,time.localtime(b.last_updated)))
-            (rv, total, failed, output) = handlers.handler.process_handlers()
+            (rv, total, failed, output) = handlers.process_handlers()
             b.failed_tests = failed
             b.total_tests = total
             b.output_log = output
