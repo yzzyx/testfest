@@ -49,6 +49,7 @@ class Branch:
         conn.close()
 
         if data is None:
+            print "Could not find data for %s %d" % (self.name, self.last_updated)
             # No data found
             return
 
@@ -80,12 +81,10 @@ class Branch:
         # Don't save the data twice
         self.cached_data = True
 
-
 class Repository:
     repository_name = ""
     clone_url = ""
     repo_path = ""
-    virtenv_path = ""
 
     # Environment variables
     original_cwd = ""
@@ -99,46 +98,27 @@ class Repository:
         # Replace slashes in path
         repository_name = repository_name.replace("/", "_")
         self.repo_path = os.path.join(config.REPOSITORY_PATH, repository_name)
-        self.virtenv_path =  os.path.join(config.VIRTENV_PATH,repository_name)
 
     def set_clone_url(self, clone_url):
         self.clone_url = clone_url
 
     def initialize(self):
-
-        # Setup virtualenv
-        if not os.path.isdir(self.virtenv_path):
-            subprocess.call(["virtualenv", self.virtenv_path])
-
-        # Then create path and import repo
+        # Create path and import repo
         if not os.path.exists(self.repo_path):
             os.makedirs(self.repo_path)
             subprocess.call(["git", "clone", self.clone_url, self.repo_path])
 
-    def setup_env(self):
-        self.original_cwd = os.getcwd()
-        self.original_path = os.environ["PATH"]
-
-        # Setup our env
-        os.chdir(self.repo_path)
-        os.environ["VIRTUAL_ENV"] = self.virtenv_path
-        os.environ["PATH"] = os.path.join(self.virtenv_path, "bin") + ":" + os.environ["PATH"]
-        if "PYTHONHOME" in os.environ:
-            self.original_pyhome = os.environ["PYTHONHOME"]
-            del os.environ["PYTHONHOME"]
-
-    def reset_env(self):
-        os.chdir(self.original_cwd)
-        del os.environ["VIRTUAL_ENV"]
-        os.environ["PATH"] = self.original_path
-        if self.original_pyhome:
-            os.environ["PYTHONHOME"] = self.original_pyhome
-
     def fetch(self):
         # First, download data
+        print("Fetching data...")
+        original_cwd = os.getcwd()
+        os.chdir(self.repo_path)
         subprocess.call(["git", "fetch", "--all"])
+        os.chdir(original_cwd)
 
     def get_branches(self):
+        original_cwd = os.getcwd()
+        os.chdir(self.repo_path)
         po = subprocess.Popen(["git", "branch", "-a"], stdout=subprocess.PIPE)
         output = po.communicate()[0]
 
@@ -159,17 +139,19 @@ class Repository:
                     stdout=subprocess.PIPE)
             branch.last_updated = int(po.communicate()[0])
 
-            # Load cached data, if we have any
-            branch.get_saved_data()
             branches.append(branch)
+
+        os.chdir(original_cwd)
+
+        for b in branches:
+            # Load cached data, if we have any
+            b.get_saved_data()
+
         return branches
 
     def set_branch(self, branch):
-        #ref = full_ref[full_ref.rfind('/')+1:]
-
         # Now switch to ref, and ignore/overwrite any/all local changes
+        original_cwd = os.getcwd()
+        os.chdir(self.repo_path)
         subprocess.call(["git", "reset", "--hard", branch.ref])
-
-        # Run pip again on requirements file
-        if config.IMPORT_REQUIREMENTS and os.path.exists("requirements.txt"):
-            subprocess.call(["pip", "install", "-q", "-r", "requirements.txt"])
+        os.chdir(original_cwd)

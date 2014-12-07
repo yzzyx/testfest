@@ -13,33 +13,34 @@
     <small>Generated {{ date }}</small>
 </div>
 
-{% for branches %}
+{% for branch in branches %}
     <div class="container">
     <div class="col-md-2">
-        {{ name }}
+        {{ branch.name }}
     </div>
     <div class="col-md-4">
-{% if $total_tests == 0 %}
+{% if branch.total_tests == 0 %}
         <span class="label label-danger">No tests defined!</span></small>
-{% end if %}
-{% if $total_tests > 0 %}
-    <span class="label label-info">Total tests: <span class="badge">{{ total_tests }}</span></span></small>
-    {% if $failed_tests > 0 %}
-    &nbsp;<span class="label label-danger">Tests failed: <span class="badge">{{ failed_tests }}</span></span>
-    {% end if %}
-    {% if $failed_tests == 0 %}
-            <span class="label label-success">Tests passsed</span>
-    {% end if %}
-{% end if %}
+{% else  %}
+    <span class="label label-info">Total tests: <span class="badge">{{ branch.total_tests }}</span></span></small>
+    {% if branch.failed_tests > 0 %}
+    &nbsp;<span class="label label-danger">Tests failed: <span class="badge">{{ branch.failed_tests }}</span></span>
+    {% else %}
+        <span class="label label-success">Tests passsed</span>
+    {% endif %}
+{% endif %}
+
     <button type="button" class="btn btn-info btn-xs" data-toggle="collapse"
-        data-target="#LOG_{{ name }}" aria-expanded="false" aria-controls="LOG_{{ name }}">
+        data-target="#LOG_{{ branch.name }}" aria-expanded="false" aria-controls="LOG_{{ branch.name }}">
     Show log</button>
-<a href="{{ coverage_log }}"  class="btn btn-info btn-xs">Show coverage report</a>
+{% if branch.coverage_log %}
+<a href="{{ branch.coverage_log }}"  class="btn btn-info btn-xs">Show coverage report</a>
+{% endif %}
     </div>
     </div><br/>
     <div class="container">
-    <div id="LOG_{{ name }}" class="collapse">
-    <pre>{{ output_log }}</pre>
+    <div id="LOG_{{ branch.name }}" class="collapse">
+    <pre>{{ branch.output_log }}</pre>
     </div>
     </div>
 {% endfor %}
