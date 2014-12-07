@@ -1,4 +1,21 @@
 # -*- coding: utf-8 -*-
+"""
+testfest - simple testing report utility
+Copyright (C) 2014 Elias Norberg
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
 # This must be specified when setting up the github webhook
 SECRET="my-secret"
@@ -7,7 +24,7 @@ SECRET="my-secret"
 REPOSITORY_PATH=".repos"
 
 # If we're polling, specify from where
-POLL_REPOSITORY_URL = "~/devel/test_repo"
+POLL_REPOSITORY_URL = "/home/elias/devel/test_repo"
 POLL_REPOSITORY_NAME = "test_repo"
 POLL_SLEEP = 15
 
