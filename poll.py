@@ -16,9 +16,6 @@ template = template_env.get_template('report.html')
 if config.POLL_REPOSITORY_URL == "":
     print "You must set POLL_REPOSITORY_URL in config.py"
 
-if not os.path.isdir(config.VIRTENV_PATH):
-    os.makedirs(config.VIRTENV_PATH)
-
 clone_url = config.POLL_REPOSITORY_URL
 name = config.POLL_REPOSITORY_NAME
 
