@@ -15,7 +15,7 @@ and the only logparser is 'django'
 
 Setup (server side)
 -------------------
-
+```
    $ git clone https://github.com/yzzyx/testfest.git
    $ cd testfest
    $ pip install -r requirements.txt
@@ -23,6 +23,7 @@ Setup (server side)
    Edit config.py
 
    $ ./poll.py   # If we're using polling
+```
 
 Setup (repository)
 ------------------
@@ -30,6 +31,7 @@ Setup (repository)
 Add a file with the name `.testfest.yml`
 Add the following contents:
 
+```YAML
    language: python
    parser: django
    python:
@@ -37,5 +39,6 @@ Add the following contents:
    install:
         - "pip install -r requirements.txt"
    script: "python runtest.py"
+```
 
 NOTE! This file must exist in all branches that needs testing
