@@ -104,8 +104,9 @@ class Repository:
 
     def initialize(self):
         # Create path and import repo
-        if not os.path.exists(self.repo_path):
-            os.makedirs(self.repo_path)
+        if not os.path.exists(os.path.join(self.repo_path, '.git')):
+            if not os.path.exists(self.repo_path):
+                os.makedirs(self.repo_path)
             subprocess.call(["git", "clone", self.clone_url, self.repo_path])
 
     def fetch(self):
