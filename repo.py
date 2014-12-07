@@ -66,7 +66,6 @@ class Branch:
         conn.close()
 
         if data is None:
-            print "Could not find data for %s %d" % (self.name, self.last_updated)
             # No data found
             return
 
@@ -124,14 +123,15 @@ class Repository:
         if not os.path.exists(os.path.join(self.repo_path, '.git')):
             if not os.path.exists(self.repo_path):
                 os.makedirs(self.repo_path)
-            subprocess.call(["git", "clone", self.clone_url, self.repo_path])
+            FNULL = open(os.devnull, 'w')
+            subprocess.call(["git", "clone", self.clone_url, self.repo_path], stdout=FNULL, stderr=subprocess.STDOUT)
 
     def fetch(self):
         # First, download data
-        print("Fetching data...")
         original_cwd = os.getcwd()
         os.chdir(self.repo_path)
-        subprocess.call(["git", "fetch", "--all"])
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(["git", "fetch", "--all"], stdout=FNULL, stderr=subprocess.STDOUT)
         os.chdir(original_cwd)
 
     def get_branches(self):
@@ -171,5 +171,7 @@ class Repository:
         # Now switch to ref, and ignore/overwrite any/all local changes
         original_cwd = os.getcwd()
         os.chdir(self.repo_path)
-        subprocess.call(["git", "reset", "--hard", branch.ref])
+
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(["git", "reset", "--hard", branch.ref], stdout=FNULL, stderr=subprocess.STDOUT)
         os.chdir(original_cwd)
