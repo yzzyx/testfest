@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
 
-def django_parse(output):
+def python_unittest_parse(output):
     """
-    Parse django log
+    Parse python unittest log output
     """
     m = re.search(r"^Ran ([0-9]*) tests", output, re.MULTILINE)
     if m is None:

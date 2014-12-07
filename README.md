@@ -11,7 +11,7 @@ No extra work should be needed when a new branch is created.
 Status
 ------
 Beta. It works, but the only implemented language is python (2.7),
-and the only logparser is 'django'
+and the only logparser is 'python-unittest'
 
 Setup (server side)
 -------------------
@@ -33,7 +33,7 @@ Add the following contents:
 
 ```YAML
    language: python
-   parser: django
+   parser: python-unittest
    python:
         - "py27"
    install:
