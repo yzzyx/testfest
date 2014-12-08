@@ -24,9 +24,10 @@ SECRET="my-secret"
 REPOSITORY_PATH=".repos"
 
 # If we're polling, specify from where
-POLL_REPOSITORY_URL = "https://github.com/yzzyx/testfest"
-POLL_REPOSITORY_NAME = "yzzyx/testfest"
-POLL_SLEEP = 3600
+POLL = {
+        "yzzyx/testfest" : { "repository_url" :  "https://github.com/yzzyx/testfest", "sleep": 3600 },
+        "yzzyx/testfest-testrepo" : { "repository_url" :  "https://github.com/yzzyx/testfest-testrepo", "sleep": 3600 },
+        }
 
 # Use SQLITE3 for cache of branch test-info
 USE_SQLITE3 = True

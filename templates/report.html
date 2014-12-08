@@ -8,12 +8,15 @@
 
 <body>
 <div class="container">
-<div class="page-header">
-    <h1>{{ git_repository_full_name }}</h1>
-    <small>Generated {{ date }}</small>
-</div>
+    <div class="page-header">
+        <h1>testfest</h1>
+        <small>Generated {{ date }}</small>
+    </div>
 
-{% for branch in branches %}
+{% for repo in repositories %}
+<h3>{{ repo.name }}</h3>
+
+{% for branch in repo.branches %}
     <div class="container">
     <div class="col-md-2">
         {{ branch.name }}
@@ -43,7 +46,8 @@
     <pre>{{ branch.output_log }}</pre>
     </div>
     </div>
-{% endfor %}
+    {% endfor %} {# for branch in repo.branches #}
+{% endfor %} {# for repo in repositories #}
 </div>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
