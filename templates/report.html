@@ -30,9 +30,9 @@
     {% endif %}
 {% endif %}
 
-    <button type="button" class="btn btn-info btn-xs" data-toggle="collapse"
+    <a href="#" type="button" class="label label-info" data-toggle="collapse"
         data-target="#LOG_{{ branch.name }}" aria-expanded="false" aria-controls="LOG_{{ branch.name }}">
-    Show log</button>
+    Show log</a>
 {% if branch.coverage_log %}
 <a href="{{ branch.coverage_log }}"  class="btn btn-info btn-xs">Show coverage report</a>
 {% endif %}
