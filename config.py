@@ -24,9 +24,9 @@ SECRET="my-secret"
 REPOSITORY_PATH=".repos"
 
 # If we're polling, specify from where
-POLL_REPOSITORY_URL = "/home/elias/devel/test_repo"
-POLL_REPOSITORY_NAME = "test_repo"
-POLL_SLEEP = 15
+POLL_REPOSITORY_URL = "https://github.com/yzzyx/testfest"
+POLL_REPOSITORY_NAME = "yzzyx/testfest"
+POLL_SLEEP = 3600
 
 # Use SQLITE3 for cache of branch test-info
 USE_SQLITE3 = True
