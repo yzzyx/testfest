@@ -74,15 +74,12 @@ while 1:
         repo.fetch()
         branches = repo.get_branches()
 
-        print "Branches: %d" % len(branches)
         for b in branches:
 
             # Check if we already have this data
             if b.cached_data:
-                print "Cached: %s %s" % (b.name, time.strftime(config.DATETIME_STR, time.localtime(b.last_updated)))
                 continue
 
-            print "Not cached: %s %s" % (b.name, time.strftime(config.DATETIME_STR, time.localtime(b.last_updated)))
             repo.set_branch(b)
 
             # Load configuration file
@@ -145,7 +142,6 @@ while 1:
         variables['repositories'].append(repo_variables)
 
     if updated:
-        print variables
         with open(config.OUTPUT_FILE, "w") as fd:
              fd.write(template.render(variables))
 
